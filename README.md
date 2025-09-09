@@ -90,7 +90,7 @@ jora_planner/
 
 1.  **Клонируйте репозиторий:**
     ```bash
-    git clone <URL-вашего-репозитория>
+    git clone <https://github.com/romahawk-ru/jora_planner>
     cd jora_planner
     ```
 
