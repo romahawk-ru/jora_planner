@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Мои задачи - Планировщик задач{% endblock %}
+
+{% block content %}
+
+<div class="debug-info">
+    <small>Всего задач: {{ tasks|length }}</small>
+    {% for task in tasks %}
+    <small>Задача: {{ task.title }} | User: {{ task.user_id }} | Current User: {{ current_user.id }}</small>
+    {% endfor %}
+</div>
+
+<div class="tasks-header">
+    <h2>Мои задачи</h2>
+    <a href="{{ url_for('add_task') }}" class="btn btn-primary">Добавить задачу</a>
+</div>
+
+<div class="filters">
+    <h3>Фильтры:</h3>
+    <div class="filter-buttons">
+        <a href="{{ url_for('tasks') }}?filter=all" 
+        class="btn {% if current_filter == 'all' %}btn-primary{% else %}btn-secondary{% endif %}">
+            Все ({{ task_counts.total }})
+        </a>
+        <a href="{{ url_for('tasks') }}?filter=active" 
+        class="btn {% if current_filter == 'active' %}btn-primary{% else %}btn-secondary{% endif %}">
+            Активные ({{ task_counts.active }})
+        </a>
+        <a href="{{ url_for('tasks') }}?filter=completed" 
+        class="btn {% if current_filter == 'completed' %}btn-primary{% else %}btn-secondary{% endif %}">
+            Выполненные ({{ task_counts.completed }})
+        </a>
+        <a href="{{ url_for('tasks') }}?filter=overdue" 
+        class="btn {% if current_filter == 'overdue' %}btn-primary{% else %}btn-secondary{% endif %}">
+            Просроченные ({{ task_counts.overdue }})
+        </a>
+    </div>
+    
+    {% if current_filter != 'all' %}
+    <div class="filter-info">
+        <small>Показано: {{ tasks|length }} задач</small>
+        <a href="{{ url_for('tasks') }}" class="btn btn-sm btn-outline-secondary">Сбросить фильтр</a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="task-list">
+    {% for task in tasks %}
+    <div class="task-card {{ task.priority }} {% if task.completed %}completed{% endif %} {% if task.is_overdue() %}overdue{% endif %}">
+        <div class="task-header">
+            <h3>{{ task.title }}</h3>
+            <div class="task-actions">
+                <a href="{{ url_for('edit_task', task_id=task.id) }}" class="btn btn-info">✏️</a>
+                {% if not task.completed %}
+                <a href="{{ url_for('complete_task', task_id=task.id) }}" class="btn btn-success">✓</a>
+                {% else %}
+                <a href="{{ url_for('complete_task', task_id=task.id) }}" class="btn btn-secondary">↻</a>
+                {% endif %}
+                <a href="{{ url_for('delete_task', task_id=task.id) }}" class="btn btn-danger" 
+                onclick="return confirm('Удалить задачу?')">✕</a>
+            </div>
+        </div>
+        
+        {% if task.description %}
+        <p class="task-description">{{ task.description }}</p>
+        {% endif %}
+        
+        <div class="task-meta">
+            <span class="priority priority-{{ task.priority }}">
+                Приоритет: {{ task.priority_display }}
+            </span>
+            
+            <span class="task-status {% if task.completed %}status-completed{% elif task.is_overdue() %}status-overdue{% else %}status-active{% endif %}">
+                {% if task.completed %}
+                    ✓ Выполнено
+                {% elif task.is_overdue() %}
+                    ⚠ Просрочено
+                {% else %}
+                    Активно
+                {% endif %}
+            </span>
+            
+            {% if task.due_date %}
+            <span class="due-date {% if task.is_overdue() %}overdue{% endif %}">
+                Срок: {{ task.due_date.strftime('%d.%m.%Y %H:%M') }}
+            </span>
+            {% endif %}
+            
+            {% if task.reminder_time %}
+            <span class="reminder">Напоминание: {{ task.reminder_time.strftime('%d.%m.%Y %H:%M') }}</span>
+            {% endif %}
+            
+            {% if task.repeat_interval %}
+            <span class="repeat">Повтор: {{ task.repeat_interval_display }}</span>
+            {% endif %}
+        </div>
+        
+        <div class="task-tags">
+            {% if task.categories %}
+            <div class="categories">
+                {% for category in task.categories %}
+                <span class="category" style="background-color: {{ category.color }}">{{ category.name }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            {% if task.tags %}
+            <div class="tags">
+                {% for tag in task.tags %}
+                <span class="tag">{{ tag.name }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        
+        {% if task.attachment_path %}
+        <div class="task-attachment">
+            <a href="{{ url_for('download_attachment', task_id=task.id) }}" class="btn btn-secondary">
+                📎 Скачать файл
+            </a>
+        </div>
+        {% endif %}
+        
+        <div class="task-footer">
+            <small>Создано: {{ task.created_at.strftime('%d.%m.%Y %H:%M') }}</small>
+            {% if task.completed %}
+            <span class="completed-badge">✓ Выполнено</span>
+            {% endif %}
+            {% if task.is_overdue() and not task.completed %}
+            <span class="overdue-badge">⚠ Просрочено</span>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>У вас пока нет задач</p>
+        <a href="{{ url_for('add_task') }}" class="btn btn-primary">Добавить первую задачу</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

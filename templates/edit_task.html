@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Редактировать задачу - Планировщик задач{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Редактировать задачу: {{ task.title }}</h2>
+    
+    <form method="POST" enctype="multipart/form-data" class="task-form">
+        {{ form.hidden_tag() }}
+        
+        <div class="form-group">
+            {{ form.title.label }}
+            {{ form.title(class="form-control", placeholder="Введите название задачи") }}
+            {% for error in form.title.errors %}
+                <span class="error">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.description.label }}
+            {{ form.description(class="form-control", rows=4, placeholder="Опишите задачу подробнее") }}
+            {% for error in form.description.errors %}
+                <span class="error">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                {{ form.priority.label }}
+                {{ form.priority(class="form-control") }}
+            </div>
+            
+            <div class="form-group">
+                {{ form.repeat_interval.label }}
+                {{ form.repeat_interval(class="form-control") }}
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                {{ form.due_date.label }}
+                {{ form.due_date(class="form-control", type="datetime-local") }}
+            </div>
+            
+            <div class="form-group">
+                {{ form.reminder_time.label }}
+                {{ form.reminder_time(class="form-control", type="datetime-local") }}
+            </div>
+        </div>
+        
+        <div class="form-group">
+            {{ form.categories.label }}
+            {{ form.categories(class="form-control", multiple="multiple") }}
+            <small>Удерживайте Ctrl для выбора нескольких категорий</small>
+        </div>
+        
+        <div class="form-group">
+            {{ form.tags.label }}
+            {{ form.tags(class="form-control", multiple="multiple") }}
+            <small>Удерживайте Ctrl для выбора нескольких тегов</small>
+        </div>
+        
+        <div class="form-group">
+            {{ form.attachment.label }}
+            {{ form.attachment(class="form-control") }}
+            <small>Можно прикрепить JPG, PNG, PDF, DOC, DOCX, TXT (макс. 16MB)</small>
+            
+            {% if task.attachment_path %}
+            <div class="current-attachment">
+                <strong>Текущий файл:</strong> 
+                <a href="{{ url_for('download_attachment', task_id=task.id) }}">
+                    {{ task.attachment_path.split('/')[-1] }}
+                </a>
+                <br>
+                {{ form.delete_attachment }} {{ form.delete_attachment.label }}
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="form-actions">
+            {{ form.submit(class="btn btn-primary") }}
+            <a href="{{ url_for('tasks') }}" class="btn btn-secondary">Отмена</a>
+            <a href="{{ url_for('delete_task', task_id=task.id) }}" class="btn btn-danger" 
+              onclick="return confirm('Вы уверены, что хотите удалить эту задачу?')">Удалить</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
