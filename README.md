@@ -20,27 +20,35 @@
 - **🇷🇺 Русская локализация:** Полная поддержка русского языка.
 
 ## 🗂️ Структура проекта
+
+```
 jora_planner/
 │
-├── app.py # Основное приложение Flask
-├── forms.py # Формы WTForms
-├── models.py # Модели SQLAlchemy
-├── database.db # Файл базы данных SQLite (создается автоматически)
-├── requirements.txt # Зависимости Python
+├── app.py                      # Основное приложение Flask
+├── forms.py                    # Формы WTForms
+├── models.py                   # Модели SQLAlchemy
+├── database.db                 # Файл базы данных SQLite
+├── requirements.txt            # Зависимости Python
+├── init_database.py            # Скрипт инициализации БД
+├── create_database.py          # Скрипт создания БД
+├── force_create_db.py          # Скрипт принудительного создания БД
+├── rebuild_database.py         # Скрипт пересоздания БД
+├── check_database.py           # Скрипт проверки БД
 │
-├── templates/ # HTML шаблоны
-│ ├── base.html # Базовый шаблон
-│ ├── index.html # Главная страница
-│ ├── login.html # Страница входа
-│ ├── register.html # Страница регистрации
-│ ├── tasks.html # Список задач
-│ ├── add_task.html # Добавление новой задачи
-│ └── edit_task.html # Редактирование задачи
+├── templates/                  # HTML шаблоны
+│   ├── base.html              # Базовый шаблон
+│   ├── index.html             # Главная страница
+│   ├── login.html             # Страница входа
+│   ├── register.html          # Страница регистрации
+│   ├── tasks.html             # Список задач
+│   ├── add_task.html          # Добавление новой задачи
+│   └── edit_task.html         # Редактирование задачи
 │
-└── static/ # Статические файлы
-├── style.css # Стили CSS
-└── uploads/ # Папка для загружаемых файлов
-└── (загруженные файлы задач)
+└── static/                     # Статические файлы
+    ├── style.css              # Стили CSS
+    └── uploads/               # Папка для загружаемых файлов
+        └── (загруженные файлы задач)
+```
 
 
 ### 📋 Подробное описание файлов
@@ -132,6 +140,7 @@ jora_planner/
 Для установки всех зависизей выполните:
 ```bash
 pip install -r requirements.txt
+```
 
 📄 Лицензия
 Этот проект распространяется под лицензией MIT. Подробнее см. в файле LICENSE.
